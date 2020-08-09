@@ -4,6 +4,8 @@ import 'package:album_app/router.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
+  static const String routeName = "/";
+
   final String nextRoute;
 
   const SplashScreen({Key key, this.nextRoute}) : super(key: key);
