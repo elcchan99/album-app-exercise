@@ -1,3 +1,4 @@
+import 'package:album_app/components/image_with_loading.dart';
 import 'package:album_app/constant.dart';
 import 'package:album_app/router.dart';
 import 'package:flutter/material.dart';
@@ -143,7 +144,7 @@ class SplashContent extends StatelessWidget {
             .copyWith(color: kTertiaryColor),
       ),
       Spacer(),
-      Image.network(image),
+      ImageWithLoading(image: image),
     ]);
   }
 }
