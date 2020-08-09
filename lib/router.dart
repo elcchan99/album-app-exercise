@@ -11,7 +11,8 @@ class Router {
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     String routeName = settings.name;
-    if (!routes.containsKey(routeName)) {
+    print("routeName: $routeName");
+    if (routes.containsKey(routeName)) {
       return MaterialPageRoute(builder: routes[routeName]);
     }
     return MaterialPageRoute(builder: (_) => NotFoundScreen());
