@@ -1,16 +1,17 @@
-import 'package:album_app/components/image_with_loading.dart';
-import 'package:album_app/constant.dart';
 import 'package:album_app/controllers/album_controller.dart';
+import 'package:album_app/controllers/photo_download_controller.dart';
 import 'package:album_app/models/photo_model.dart';
 import 'package:album_app/screens/album/album_detail_screen.dart';
+import 'package:album_app/screens/album/components/album_list_tile.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 
 class AlbumListScreen extends StatelessWidget {
   static const String routeName = "/ablum";
 
   final AlbumController albumController = Get.put(AlbumController());
+  final PhotoDownloadController downloadController =
+      Get.put(PhotoDownloadController());
 
   static const int pageSize = 12;
 
@@ -55,8 +56,8 @@ class AlbumListScreen extends StatelessWidget {
     );
   }
 
-  void onDownload(PhotoModel photo) {
-    print("Going to download $photo");
+  void onDownload(BuildContext context, PhotoModel photo) {
+    downloadController.download(photo);
   }
 
   void initState() {
@@ -84,7 +85,9 @@ class AlbumListScreen extends StatelessWidget {
                       }
                       return false;
                     },
-                    child: buildDetails(album));
+                    child: GetBuilder<PhotoDownloadController>(
+                        builder: (downloader) =>
+                            buildDetails(album, downloader)));
               }
             }));
   }
@@ -95,7 +98,9 @@ class AlbumListScreen extends StatelessWidget {
   Widget buildError(AlbumController album) =>
       Center(child: Text(album.lastError));
 
-  Widget buildDetails(AlbumController album) => ListView.separated(
+  Widget buildDetails(
+          AlbumController album, PhotoDownloadController downloader) =>
+      ListView.separated(
         separatorBuilder: (context, index) => Divider(
           height: 2,
         ),
@@ -105,38 +110,11 @@ class AlbumListScreen extends StatelessWidget {
             return Center(child: CircularProgressIndicator());
           }
           final item = album.photos[index];
-          return Slidable(
-            actionPane: SlidableDrawerActionPane(),
-            actionExtentRatio: 0.25,
-            child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 4),
-                child: ListTile(
-                  leading: SizedBox(
-                      width: 70,
-                      height: 70,
-                      child: Hero(
-                        child: ImageWithLoading(
-                            image: item.imageUrlWithFixedSize(70, 70)),
-                        tag: item.image,
-                      )),
-                  title: Text(item.title),
-                  subtitle: Text(
-                    item.description,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  onTap: () {
-                    onSelect(context, item);
-                  },
-                )),
-            secondaryActions: <Widget>[
-              IconSlideAction(
-                caption: "Download",
-                color: kQuaternaryColor,
-                icon: Icons.file_download,
-                onTap: () => onDownload(item),
-              ),
-            ],
-          );
+          return AlbumListTile(
+              item: item,
+              onDownload: onDownload,
+              onSelect: onSelect,
+              downloadStatus: downloader.getStatus(item));
         },
       );
 }

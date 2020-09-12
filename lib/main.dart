@@ -1,6 +1,6 @@
 import 'package:album_app/constant.dart';
 import 'package:album_app/utils/color_util.dart';
-import 'package:album_app/router.dart';
+import 'package:album_app/router.dart' as approuter;
 import 'package:flutter/material.dart';
 
 void main() {
@@ -32,6 +32,6 @@ class MyApp extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         initialRoute: "/",
-        onGenerateRoute: Router.generateRoute);
+        onGenerateRoute: approuter.Router.generateRoute);
   }
 }

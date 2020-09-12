@@ -1,6 +1,6 @@
 import 'package:album_app/components/image_with_loading.dart';
 import 'package:album_app/constant.dart';
-import 'package:album_app/router.dart';
+import 'package:album_app/router.dart' as approuter;
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -38,8 +38,8 @@ class _SplashScreenState extends State<SplashScreen> {
   ];
 
   void onExit() {
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: Router.routes[widget.nextRoute]));
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: approuter.Router.routes[widget.nextRoute]));
   }
 
   @override
