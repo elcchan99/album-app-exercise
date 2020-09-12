@@ -1,14 +1,18 @@
 import 'package:album_app/components/image_with_loading.dart';
+import 'package:album_app/constant.dart';
 import 'package:album_app/controllers/album_controller.dart';
 import 'package:album_app/models/photo_model.dart';
 import 'package:album_app/screens/album/album_detail_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 
 class AlbumListScreen extends StatelessWidget {
   static const String routeName = "/ablum";
 
   final AlbumController albumController = Get.put(AlbumController());
+
+  static const int pageSize = 12;
 
   // static final photos = <PhotoModel>[
   //   PhotoModel(
@@ -51,7 +55,13 @@ class AlbumListScreen extends StatelessWidget {
     );
   }
 
-  void initState() {}
+  void onDownload(PhotoModel photo) {
+    print("Going to download $photo");
+  }
+
+  void initState() {
+    albumController.fetchNext(pageSize: pageSize);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,25 +69,24 @@ class AlbumListScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text("My Album"),
         ),
-        body: Container(
-            child: GetBuilder<AlbumController>(initState: (state) {
-          albumController.fetchNext();
-        }, builder: (album) {
-          if (album.photos.isEmpty) {
-            return buildLoading(album);
-          } else {
-            return NotificationListener<ScrollNotification>(
-                onNotification: (ScrollNotification scrollInfo) {
-                  if (scrollInfo is ScrollEndNotification &&
-                      scrollInfo.metrics.extentAfter == 0) {
-                    album.fetchNext();
-                    return true;
-                  }
-                  return false;
-                },
-                child: buildDetails(album));
-          }
-        })));
+        body: GetBuilder<AlbumController>(
+            initState: (state) => initState(),
+            builder: (album) {
+              if (album.photos.isEmpty) {
+                return buildLoading(album);
+              } else {
+                return NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification scrollInfo) {
+                      if (scrollInfo is ScrollEndNotification &&
+                          scrollInfo.metrics.extentAfter == 0) {
+                        album.fetchNext(pageSize: pageSize);
+                        return true;
+                      }
+                      return false;
+                    },
+                    child: buildDetails(album));
+              }
+            }));
   }
 
   Widget buildLoading(AlbumController album) =>
@@ -87,30 +96,46 @@ class AlbumListScreen extends StatelessWidget {
       Center(child: Text(album.lastError));
 
   Widget buildDetails(AlbumController album) => ListView.separated(
-        separatorBuilder: (context, index) => Divider(),
+        separatorBuilder: (context, index) => Divider(
+          height: 2,
+        ),
         itemCount: album.photos.length + 1,
         itemBuilder: (context, index) {
           if (index >= album.photos.length) {
             return Center(child: CircularProgressIndicator());
           }
           final item = album.photos[index];
-          return ListTile(
-            leading: SizedBox(
-                width: 70,
-                height: 70,
-                child: Hero(
-                  child: ImageWithLoading(
-                      image: item.imageUrlWithFixedSize(70, 70)),
-                  tag: item.image,
+          return Slidable(
+            actionPane: SlidableDrawerActionPane(),
+            actionExtentRatio: 0.25,
+            child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 4),
+                child: ListTile(
+                  leading: SizedBox(
+                      width: 70,
+                      height: 70,
+                      child: Hero(
+                        child: ImageWithLoading(
+                            image: item.imageUrlWithFixedSize(70, 70)),
+                        tag: item.image,
+                      )),
+                  title: Text(item.title),
+                  subtitle: Text(
+                    item.description,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onTap: () {
+                    onSelect(context, item);
+                  },
                 )),
-            title: Text(item.title),
-            subtitle: Text(
-              item.description,
-              overflow: TextOverflow.ellipsis,
-            ),
-            onTap: () {
-              onSelect(context, item);
-            },
+            secondaryActions: <Widget>[
+              IconSlideAction(
+                caption: "Download",
+                color: kQuaternaryColor,
+                icon: Icons.file_download,
+                onTap: () => onDownload(item),
+              ),
+            ],
           );
         },
       );
