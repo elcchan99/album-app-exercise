@@ -1,3 +1,4 @@
+import 'package:album_app/bindings.dart';
 import 'package:album_app/constant.dart';
 import 'package:album_app/utils/color_util.dart';
 import 'package:album_app/router.dart' as approuter;
@@ -9,6 +10,8 @@ void main() {
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+  final Bindings binding = Bindings();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

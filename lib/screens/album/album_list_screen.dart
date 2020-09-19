@@ -1,8 +1,6 @@
 import 'package:album_app/controllers/album_controller.dart';
 import 'package:album_app/controllers/photo_download_controller.dart';
 import 'package:album_app/data/model/photo_model.dart';
-import 'package:album_app/data/provider/picsum_photo_api.dart';
-import 'package:album_app/data/repository/photo_repository.dart';
 import 'package:album_app/screens/album/album_detail_screen.dart';
 import 'package:album_app/screens/album/components/album_list_tile.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +9,9 @@ import 'package:get/get.dart';
 class AlbumListScreen extends StatelessWidget {
   static const String routeName = "/ablum";
 
-  final AlbumController albumController = Get.put<AlbumController>(
-      AlbumController(
-          repository: PhotoRepository(apiClient: PicsumPhotoApi())));
+  final AlbumController albumController = Get.find<AlbumController>();
   final PhotoDownloadController downloadController =
-      Get.put(PhotoDownloadController());
+      Get.find<PhotoDownloadController>();
 
   static const int pageSize = 12;
 
