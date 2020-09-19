@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:album_app/data/model/photo_model.dart';
-import 'package:dio/dio.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/state_manager.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -52,25 +51,6 @@ class PhotoDownloadController extends GetxController {
         })
         .timeout(Duration(seconds: 10))
         .catchError((error) => setStatus(photo, DownloadStatus.ERROR));
-    // Dio dio = Dio();
-    // _getDirectory()
-    //     .then((directory) {
-    //       directory.create(recursive: true);
-    //       final destination = "${directory.path}/${photo.fileName}";
-    //       print("destination: $destination");
-    //       return destination;
-    //     })
-    //     .then((destination) => dio.download(
-    //           photo.image,
-    //           destination,
-    //           deleteOnError: true,
-    //           onReceiveProgress: (count, total) {
-    //             print("count: $count, total: $total");
-    //           },
-    //         ))
-    //     .then((res) => print("Response: $res"))
-    //     .catchError((error) => setStatus(photo, DownloadStatus.ERROR))
-    //     .whenComplete(() => setStatus(photo, DownloadStatus.COMPLETED));
   }
 
   Future<Directory> _getDirectory() async {
@@ -78,20 +58,6 @@ class PhotoDownloadController extends GetxController {
         ? await getExternalStorageDirectory()
         : await getApplicationDocumentsDirectory();
   }
-
-  // Future<String> _persistImage(PhotoModel photo,
-  //     {String mimeType = "image/jpeg"}) async {
-  //   var imageId = await ImageDownloader.downloadImage(
-  //     photo.image,
-  //     destination:
-  //         Platform.isIOS ? null : AndroidDestinationType.directoryDownloads,
-  //     outputMimeType: mimeType,
-  //   );
-  //   if (imageId == null) {
-  //     throw Exception("Fail to download with unknown reason");
-  //   }
-  //   return await ImageDownloader.findPath(imageId);
-  // }
 }
 
 enum DownloadStatus {
