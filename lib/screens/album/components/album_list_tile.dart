@@ -1,6 +1,6 @@
 import 'package:album_app/components/image_with_loading.dart';
 import 'package:album_app/controllers/photo_download_controller.dart';
-import 'package:album_app/data/models/photo_model.dart';
+import 'package:album_app/data/model/photo_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 

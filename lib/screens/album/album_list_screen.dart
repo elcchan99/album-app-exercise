@@ -1,6 +1,6 @@
 import 'package:album_app/controllers/album_controller.dart';
 import 'package:album_app/controllers/photo_download_controller.dart';
-import 'package:album_app/data/models/photo_model.dart';
+import 'package:album_app/data/model/photo_model.dart';
 import 'package:album_app/screens/album/album_detail_screen.dart';
 import 'package:album_app/screens/album/components/album_list_tile.dart';
 import 'package:flutter/material.dart';

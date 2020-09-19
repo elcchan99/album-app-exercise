@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:album_app/data/models/image_model.dart';
+import 'package:album_app/data/model/image_model.dart';
 import 'package:english_words/english_words.dart';
 
 class PhotoModel {

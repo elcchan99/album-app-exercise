@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:album_app/data/models/image_model.dart';
-import 'package:album_app/data/models/photo_model.dart';
+import 'package:album_app/data/model/image_model.dart';
+import 'package:album_app/data/model/photo_model.dart';
 import 'package:dio/dio.dart';
 import 'package:get/state_manager.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:album_app/components/image_with_loading.dart';
-import 'package:album_app/data/models/photo_model.dart';
+import 'package:album_app/data/model/photo_model.dart';
 
 class AlbumDetailScreen extends StatelessWidget {
   static const String routeName = "/photo";
