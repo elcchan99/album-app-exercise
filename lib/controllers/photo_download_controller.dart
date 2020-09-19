@@ -1,12 +1,19 @@
-import 'dart:io';
-
 import 'package:album_app/data/model/photo_model.dart';
+import 'package:album_app/data/repository/local_photo_repository.dart';
+import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:path_provider/path_provider.dart';
+
+import 'gallery_controller.dart';
 
 class PhotoDownloadController extends GetxController {
+  final LocalPhotoRepository repository;
+
+  PhotoDownloadController({@required this.repository})
+      : assert(repository != null);
+
   Map<String, DownloadStatus> _statuses = {};
   Map<String, DownloadStatus> get statuses => _statuses;
 
@@ -26,7 +33,8 @@ class PhotoDownloadController extends GetxController {
     final status = getStatus(photo);
     if ([DownloadStatus.NOT_FOUND, DownloadStatus.ERROR].contains(status)) {
       setStatus(photo, DownloadStatus.PENDING);
-      await _downloadImage(photo);
+      await _downloadImage(photo)
+          .then((_) => Get.find<GalleryController>().add(photo));
     }
   }
 
@@ -41,7 +49,7 @@ class PhotoDownloadController extends GetxController {
     setStatus(photo, DownloadStatus.DOWNLOADING);
     print("Downloading image: ${photo.image}");
 
-    GallerySaver.saveImage("${photo.image}.jpg", albumName: "album_app")
+    await GallerySaver.saveImage("${photo.image}.jpg", albumName: "album_app")
         .then((value) {
           if (!value) {
             setStatus(photo, DownloadStatus.ERROR);
@@ -51,12 +59,6 @@ class PhotoDownloadController extends GetxController {
         })
         .timeout(Duration(seconds: 10))
         .catchError((error) => setStatus(photo, DownloadStatus.ERROR));
-  }
-
-  Future<Directory> _getDirectory() async {
-    return Platform.isAndroid
-        ? await getExternalStorageDirectory()
-        : await getApplicationDocumentsDirectory();
   }
 }
 
