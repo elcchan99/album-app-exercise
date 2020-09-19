@@ -2,10 +2,15 @@ import 'dart:io';
 
 import 'package:album_app/data/model/image_model.dart';
 import 'package:album_app/data/model/photo_model.dart';
+import 'package:album_app/data/repository/photo_repository.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
 
 class AlbumController extends GetxController {
+  final PhotoRepository repository;
+  AlbumController({@required this.repository}) : assert(repository != null);
+
   List<PhotoModel> _photos = <PhotoModel>[];
   List<PhotoModel> get photos => this._photos;
 
@@ -23,31 +28,14 @@ class AlbumController extends GetxController {
       return;
     }
     _startProgress();
-    _callFetchNextApi(pageSize: pageSize, offset: _piscumOffset)
+    await repository
+        .list(pageSize: pageSize, offset: _piscumOffset)
         .catchError(_handleError)
-        .then((jsonList) => jsonList
-            .map((e) => ImageModel.fromMap(e))
-            .map((e) => PhotoModel.fromImageModel(e))
-            .toList())
-        .then((images) {
-      _piscumOffset += images.length;
-      _photos.addAll(images);
-    }).whenComplete(() {
-      _completeProgress();
-    });
-  }
-
-  Future<List<dynamic>> _callFetchNextApi(
-      {int pageSize = 10, int offset = 0}) async {
-    Response response =
-        await Dio().get("https://picsum.photos/v2/list", queryParameters: {
-      "page": offset,
-      "limit": pageSize,
-    });
-    if (response.statusCode != HttpStatus.ok) {
-      throw Exception('Error: HTTP[${response.statusCode}] ${response.data}');
-    }
-    return response.data as List;
+        .then((List<ImageModel> images) => images.forEach((e) {
+              this._photos.add(PhotoModel.fromImageModel(e));
+              _piscumOffset += 1;
+            }))
+        .whenComplete(_completeProgress);
   }
 
   void _startProgress() {
